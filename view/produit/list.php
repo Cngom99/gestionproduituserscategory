@@ -15,7 +15,7 @@
             <td><?= $p['pu'] ?></td>
             <td>
                 <a href="?controller=produit&&action=delete&id=<?= $p['id'] ?>">Delete</a>
-                <button>Update</button>
+                <a href="?controller=produit&&action=update&id=<?= $p['id'] ?>">Update</a>
             </td>
         </tr>
     <?php } ?>    

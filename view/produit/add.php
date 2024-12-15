@@ -1,11 +1,12 @@
-<form action="?controller=produit&&action=save" method="POST">
-    <label for="">Libelle</label>
-    <input type="text" name="libelle"><br>
-    <label for="">Quantite</label>
-    <input type="text" name="quantite"><br>
-    <label for="">Prix Unitaire</label>
-    <input type="text" name="prix"><br>
+<form action="index.php?controller=produit&action=save" method="POST">
+    <label for="libelle">Libellé :</label>
+    <input type="text" id="libelle" name="libelle" required>
 
-    <button type="submit">Ajouter</button>
+    <label for="qt">Quantité :</label>
+    <input type="number" id="qt" name="qt" required>
 
+    <label for="pu">Prix Unitaire :</label>
+    <input type="number" id="pu" name="pu" step="0.01" required>
+
+    <button type="submit">Ajouter Produit</button>
 </form>
