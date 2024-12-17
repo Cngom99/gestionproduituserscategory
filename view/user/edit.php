@@ -1,17 +1,13 @@
-<form action="?controller=users&action=update" method="POST">
-    <input type="hidden" name="id" value="<?= $user['id'] ?>"><br>
-
-    <label for="nom">Nom:</label>
+<h1>Modifier un utilisateur</h1>
+<form method="POST" action="index.php?controller=user&action=update">
+    <input type="hidden" name="id" value="<?= $user['id'] ?>">
+    <label>Nom :</label>
     <input type="text" name="nom" value="<?= $user['nom'] ?>" required><br>
-
-    <label for="prenom">Prénom:</label>
+    <label>Prénom :</label>
     <input type="text" name="prenom" value="<?= $user['prenom'] ?>" required><br>
-
-    <label for="email">Email:</label>
+    <label>Email :</label>
     <input type="email" name="email" value="<?= $user['email'] ?>" required><br>
-
-    <label for="mot_de_passe">Mot de Passe:</label>
-    <input type="password" name="mot_de_passe"><br> <!-- Champ de mot de passe optionnel -->
-
-    <button type="submit">Mettre à jour l'utilisateur</button>
+    <label>Mot de passe :</label>
+    <input type="password" name="password" required><br>
+    <button type="submit">Mettre à jour</button>
 </form>
