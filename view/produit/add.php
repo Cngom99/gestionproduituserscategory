@@ -1,12 +1,15 @@
-<form action="index.php?controller=produit&action=save" method="POST">
-    <label for="libelle">Libellé :</label>
-    <input type="text" id="libelle" name="libelle" required>
-
-    <label for="qt">Quantité :</label>
-    <input type="number" id="qt" name="qt" required>
-
-    <label for="pu">Prix Unitaire :</label>
-    <input type="number" id="pu" name="pu" step="0.01" required>
-
-    <button type="submit">Ajouter Produit</button>
+<form action="?controller=produit&&action=save" method="POST">
+    <label for="">Libelle</label>
+    <input type="text" name="libelle"><br>
+    <label for="">Quantité</label>
+    <input type="text" name="quantite"><br>
+    <label for="">Prix Unitaire</label>
+    <input type="text" name="prix"><br>
+    <label for="">Catégorie</label>
+    <select name="idcat">
+        <?php while($c = pg_fetch_assoc($categories)) { ?>
+            <option value="<?= $c['id'] ?>"><?= $c['libelle'] ?></option>
+        <?php } ?>
+    </select><br>
+    <button type="submit">Ajouter</button>
 </form>
