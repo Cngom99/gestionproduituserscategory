@@ -1,63 +1,67 @@
 <?php
-require_once('./model/categorieModel.php');
-
-// Fonction pour afficher la liste des catégories
-function index(){
-    $categories = getAll();
-    require_once './view/categorie/list.php';
-}
-
-// Fonction pour supprimer une catégorie
-function remove(){
-    if (isset($_GET['id'])) {
-        $id = $_GET['id'];
-        delete($id); // Suppression dans la base de données
-        header('Location: index.php?controller=categorie'); // Rediriger vers la liste
-    } else {
-        echo "Aucun identifiant de catégorie fourni pour la suppression.";
-    }
-}
-
-// Fonction pour afficher la page d'ajout d'une catégorie
-function pageAdd(){
-    require_once './view/categorie/add.php';
-}
-
-// Fonction pour sauvegarder une nouvelle catégorie
-function save(){
-    if (isset($_POST['libelle'])) {
-        $libelle = $_POST['libelle'];
-        add($libelle); // Appeler le modèle pour ajouter la catégorie
-        header('Location: index.php?controller=categorie'); // Rediriger vers la liste
-    } else {
-        echo "Erreur : le libellé de la catégorie est manquant.";
-    }
-}
-
-// Fonction pour obtenir une catégorie spécifique pour la modification
-function getCategorie(){
-    if (isset($_GET['id'])) {
-        $id = $_GET['id'];
-        $categorie = pg_fetch_assoc(getById($id)); // Obtenir la catégorie depuis la base de données
-        if ($categorie) {
-            require_once './view/categorie/edit.php'; // Passer à la page d'édition
-        } else {
-            echo "Catégorie introuvable.";
+    require_once('./model/categorieModel.php');
+    function index() {
+        $categories = getAllCategories();
+        if (!$categories) {
+            die("Erreur : Impossible de récupérer les catégories.");
         }
-    } else {
-        echo "Aucun identifiant de catégorie fourni.";
+        require_once './view/categorie/list.php';
     }
-}
+    function remove() {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
-// Fonction pour mettre à jour une catégorie
-function update(){
-    if (isset($_POST['id']) && isset($_POST['libelle'])) {
-        $id = $_POST['id'];
-        $libelle = $_POST['libelle'];
-        updateCategorie($id, $libelle); // Appeler le modèle pour mettre à jour la catégorie
-        header('Location: index.php?controller=categorie'); // Rediriger vers la liste
-    } else {
-        echo "Erreur : l'identifiant ou le libellé de la catégorie est manquant.";
+        if (!$id) {
+            die("Erreur : ID invalide pour la suppression.");
+        }
+        $result = deleteCategorie($id);
+
+        if (!$result) {
+            die("Erreur : Impossible de supprimer la catégorie.");
+        }
+
+        header('Location: index.php?controller=categorie');
+        exit;
     }
-}
+    function pageAdd() {
+        require_once './view/categorie/add.php';
+    }
+    function save() {
+        $libelle = filter_input(INPUT_POST, 'libelle', FILTER_SANITIZE_STRING);
+
+        if (empty($libelle)) {
+            die("Erreur : Le libellé est obligatoire.");
+        }
+        $result = addCategorie($libelle);
+
+        if (!$result) {
+            die("Erreur : Impossible d'ajouter la catégorie.");
+        }
+
+        header('Location: index.php?controller=categorie');
+        exit;
+    }
+    function getCategorie() {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+        if (!$id) {
+            die("Erreur : ID invalide pour la récupération de la catégorie.");
+        }
+        $categorie = pg_fetch_assoc(getCategorieById($id));
+        if (!$categorie) {
+            die("Erreur : Catégorie introuvable.");
+        }
+        require_once './view/categorie/edit.php';
+    }
+    function update() {
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        $libelle = filter_input(INPUT_POST, 'libelle', FILTER_SANITIZE_STRING);
+        if (!$id || empty($libelle)) {
+            die("Erreur : Données invalides pour la mise à jour.");
+        }
+        $result = updateCategorie($id, $libelle);
+        if (!$result) {
+            die("Erreur : Impossible de mettre à jour la catégorie.");
+        }
+        header('Location: index.php?controller=categorie');
+        exit;
+    }
 ?>
