@@ -1,65 +1,56 @@
 <?php
-
-require_once('./model/db.php');
-
-// Fonction pour obtenir toutes les catégories
-function getAll(){
+require_once(__DIR__ . '/db.php'); // Correction du chemin absolu
+function getAllCategories() {
     global $connexion;
-    $sql = "SELECT * FROM categorie";
+    // Utilisez le nom exact de la table, avec des guillemets doubles si nécessaire
+    $sql = 'SELECT * FROM categorie';
+    $result = pg_query($connexion, $sql);
+
+    if (!$result) {
+        die("Erreur lors de l'exécution de la requête : " . pg_last_error($connexion));
+    }
+
+    return $result;
+}
+function deleteCategorie($id) {
+    global $connexion;
+    $id = (int) $id; // S'assurer que l'ID est un entier
+    $sql = "DELETE FROM categorie WHERE id = $id";
     $result = pg_query($connexion, $sql);
     if (!$result) {
-        echo "Erreur dans la requête : " . pg_last_error($connexion);
-        exit();
+        die("Erreur lors de la suppression : " . pg_last_error($connexion));
     }
     return $result;
 }
-
-// Fonction pour supprimer une catégorie
-function delete($id){
+function addCategorie($libelle) {
     global $connexion;
-    $sql = "DELETE FROM categorie WHERE id = $1"; // Utilisation d'un paramètre
-    $result = pg_query_params($connexion, $sql, array($id));
+    $libelle = pg_escape_string($connexion, $libelle); // Échapper les chaînes pour éviter les injections SQL
+    $sql = "INSERT INTO categorie (libelle) VALUES ('$libelle')";
+    $result = pg_query($connexion, $sql);
     if (!$result) {
-        echo "Erreur dans la suppression de la catégorie : " . pg_last_error($connexion);
-        exit();
+        die("Erreur lors de l'ajout : " . pg_last_error($connexion));
     }
     return $result;
 }
-
-// Fonction pour ajouter une nouvelle catégorie
-function add($libelle){
+function updateCategorie($id, $libelle) {
     global $connexion;
-    $sql = "INSERT INTO categorie (libelle) VALUES ($1)"; // Utilisation d'un paramètre
-    $result = pg_query_params($connexion, $sql, array($libelle));
+    $id = (int) $id;
+    $libelle = pg_escape_string($connexion, $libelle);
+    $sql = "UPDATE categorie SET libelle = '$libelle' WHERE id = $id";
+    $result = pg_query($connexion, $sql);
     if (!$result) {
-        echo "Erreur dans l'ajout de la catégorie : " . pg_last_error($connexion);
-        exit();
+        die("Erreur lors de la mise à jour : " . pg_last_error($connexion));
     }
     return $result;
 }
-
-// Fonction pour mettre à jour une catégorie
-function updateCategorie($id, $libelle){
+function getCategorieById($id) {
     global $connexion;
-    $sql = "UPDATE categorie SET libelle = $1 WHERE id = $2"; // Utilisation d'un paramètre
-    $result = pg_query_params($connexion, $sql, array($libelle, $id));
+    $id = (int) $id;
+    $sql = "SELECT * FROM categorie WHERE id = $id";
+    $result = pg_query($connexion, $sql);
     if (!$result) {
-        echo "Erreur dans la mise à jour de la catégorie : " . pg_last_error($connexion);
-        exit();
+        die("Erreur lors de la récupération de la catégorie : " . pg_last_error($connexion));
     }
     return $result;
 }
-
-// Fonction pour obtenir une catégorie par son ID
-function getById($id){
-    global $connexion;
-    $sql = "SELECT * FROM categorie WHERE id = $1"; // Utilisation d'un paramètre
-    $result = pg_query_params($connexion, $sql, array($id));
-    if (!$result) {
-        echo "Erreur dans la récupération de la catégorie : " . pg_last_error($connexion);
-        exit();
-    }
-    return $result;
-}
-
 ?>
